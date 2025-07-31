@@ -1,14 +1,39 @@
 
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Search, Globe, Bell, User } from "lucide-react";
 
 export default function Navbar() {
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > lastScrollY && window.scrollY > 50) {
+            setShowNavbar(false);
+          } else {
+            setShowNavbar(true);
+          }
+          setLastScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
     <motion.nav
       initial={{ opacity: 0, y: -40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7 }}
-      className="w-full bg-[#14387f] text-white fixed top-0 left-0 shadow-md z-50"
+      animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -40 }}
+      transition={{ duration: 0.5 }}
+      style={{ pointerEvents: showNavbar ? "auto" : "none" }}
+      className="w-full bg-[#14387f] text-white shadow-md z-50"
     >
       <div className="max-w-[1280px] mx-auto flex items-center justify-between px-8 py-4">
         {/* Left: Logo & Title */}
