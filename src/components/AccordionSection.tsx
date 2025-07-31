@@ -1,8 +1,40 @@
 import { useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
-import VerticalTabsAccordion from "./VerticalTabsAccordion";
-import VideoCardGroup from "./VideoCardGroup";
+
+// Mock components for demo - replace with your actual components
+const VerticalTabsAccordion = () => (
+  <div className="bg-gray-100 p-6 rounded-lg border">
+    <h3 className="font-semibold text-gray-800 mb-4">Vertical Tabs Accordion</h3>
+    <div className="space-y-2">
+      <div className="bg-white p-3 rounded border-l-4 border-blue-500">
+        <p className="text-sm text-gray-600">Tab 1: Feature Overview</p>
+      </div>
+      <div className="bg-white p-3 rounded border-l-4 border-gray-300">
+        <p className="text-sm text-gray-600">Tab 2: Implementation Details</p>
+      </div>
+      <div className="bg-white p-3 rounded border-l-4 border-gray-300">
+        <p className="text-sm text-gray-600">Tab 3: Best Practices</p>
+      </div>
+    </div>
+  </div>
+);
+
+const VideoCardGroup = () => (
+  <div className="bg-gray-100 p-6 rounded-lg border">
+    <h3 className="font-semibold text-gray-800 mb-4">Video Card Group</h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <div className="bg-gradient-to-br from-blue-400 to-purple-500 h-32 rounded mb-3"></div>
+        <p className="text-sm font-medium">Customer Success Story</p>
+      </div>
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <div className="bg-gradient-to-br from-green-400 to-blue-500 h-32 rounded mb-3"></div>
+        <p className="text-sm font-medium">Product Demo</p>
+      </div>
+    </div>
+  </div>
+);
 
 const sections = [
 	{
@@ -18,7 +50,14 @@ const sections = [
 	{
 		title: "Customer Service AI",
 		description: "How AI improves customer service",
-		details: `Transform customer service with AI\n\nEmpower your team with an AI copilot that understands customer intent and dynamically guides agents through customer service interactions. Pega's AI automates tasks and recommends next best actions, keeping your agents laser-focused on delivering exceptional experiences. With a seamless, guided user experience and dynamic training and coaching, every agent can be your best agent from day one.\n\nCustomer Service AI delivers faster resolutions and allows contact centers to personalize service at scale. In the backend, AI orchestrates processes and integrates legacy apps to improve efficiency and productivity.\n\nAI in customer service: What your organization should know\nAs organizations move toward a more autonomous operations model, AI for customer service can boost revenue and retention opportunities, reduce overhead costs, improve agent efficiency, and drive better outcomes for customers.`,
+		details: `Transform customer service with AI
+
+Empower your team with an AI copilot that understands customer intent and dynamically guides agents through customer service interactions. Pega's AI automates tasks and recommends next best actions, keeping your agents laser-focused on delivering exceptional experiences. With a seamless, guided user experience and dynamic training and coaching, every agent can be your best agent from day one.
+
+Customer Service AI delivers faster resolutions and allows contact centers to personalize service at scale. In the backend, AI orchestrates processes and integrates legacy apps to improve efficiency and productivity.
+
+AI in customer service: What your organization should know
+As organizations move toward a more autonomous operations model, AI for customer service can boost revenue and retention opportunities, reduce overhead costs, improve agent efficiency, and drive better outcomes for customers.`,
 		showVerticalTabsAccordion: false,
 		buttonText: "Unlock value for your contact center",
 		showVideoCardGroup: true,
@@ -44,159 +83,293 @@ const sections = [
 	},
 ];
 
-export default function FullscreenAccordion() {
+export default function PositionBasedAccordion() {
 	const [openIdx, setOpenIdx] = useState(null);
-	const accordionRefs = useRef([]);
+	const [everOpened, setEverOpened] = useState(new Set());
 
 	const handleAccordionClick = (idx) => {
 		const newOpenIdx = openIdx === idx ? null : idx;
+		
+		// Track which items have ever been opened
+		if (newOpenIdx !== null) {
+			setEverOpened(prev => new Set([...prev, newOpenIdx]));
+		}
+		
 		setOpenIdx(newOpenIdx);
 		
-		// Scroll to top of the clicked accordion item when opening
-		if (newOpenIdx !== null && accordionRefs.current[idx]) {
+		// Scroll to top when opening
+		if (newOpenIdx !== null) {
 			setTimeout(() => {
-				accordionRefs.current[idx].scrollIntoView({ 
-					behavior: 'smooth', 
-					block: 'start' 
-				});
+				window.scrollTo({ top: 0, behavior: 'smooth' });
 			}, 100);
 		}
 	};
 
-	return (
-		<div className="flex flex-col w-full mt-28">
-			{sections.map((section, idx) => (
-				<motion.div
-					key={idx}
-					ref={(el) => (accordionRefs.current[idx] = el)}
-					layout
-					initial={{ y: 80, opacity: 0 }}
-					animate={{ y: 0, opacity: 1 }}
-					transition={{ duration: 0.7, ease: "easeOut" }}
-					className={`mb-4 rounded-2xl overflow-hidden shadow-lg transition-all duration-700 ${
-						openIdx === idx ? "bg-blue-50" : "bg-white"
-					}`}
-				>
-					<motion.button
-						layout="position"
-						onClick={() => handleAccordionClick(idx)}
-						className={`w-full flex items-center justify-between text-left px-6 py-4 font-semibold text-lg transition focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 ${
-							openIdx === idx
-								? "text-blue-900 bg-blue-50"
-								: "text-gray-700 bg-gray-100"
-						}`}
-					>
-						<span>{section.title}</span>
-						<motion.span
-							initial={false}
-							animate={{ rotate: openIdx === idx ? 180 : 0 }}
-							transition={{ duration: 0.3 }}
-							className={`ml-4 flex items-center justify-center w-7 h-7 rounded-full border ${
-								openIdx === idx
-									? "border-[#002269] bg-[#002269] text-white"
-									: "border-white bg-white text-gray-700"
-							}`}
-						>
-							<ChevronUp size={20} />
-						</motion.span>
-					</motion.button>
-					
-					<motion.div
-						layout
-						initial={false}
-						animate={
-							openIdx === idx
-								? { 
-									height: "auto", 
-									opacity: 1,
-									y: 0
-								}
-								: { 
-									height: 0, 
-									opacity: 0,
-									y: -20
-								}
-						}
-						transition={{ 
-							duration: 0.5, 
-							ease: [0.04, 0.62, 0.23, 0.98],
-							opacity: { duration: 0.3 }
-						}}
-						className="overflow-hidden"
-					>
-						<motion.div 
-							layout
-							className="px-8"
-						>
-							<div className="pt-6 flex flex-col items-start text-left px-24">
-								<motion.h2
-									layout
-									className="text-3xl lg:text-4xl font-bold leading-tight pb-8 text-blue-900"
-									style={{ fontFamily: "Georgia, serif" }}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: openIdx === idx ? 1 : 0, y: openIdx === idx ? 0 : 20 }}
-									transition={{ delay: openIdx === idx ? 0.2 : 0, duration: 0.4 }}
-								>
-									{section.description}
-								</motion.h2>
-								
-								<motion.p 
-									layout
-									className="text-base text-gray-700 pb-8 max-w-2xl whitespace-pre-line"
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: openIdx === idx ? 1 : 0, y: openIdx === idx ? 0 : 20 }}
-									transition={{ delay: openIdx === idx ? 0.3 : 0, duration: 0.4 }}
-								>
-									{section.details}
-								</motion.p>
-								
-								{section.video && (
-									<motion.div 
-										layout
-										className="w-full max-w-2xl aspect-video rounded-xl overflow-hidden shadow-lg mb-6 mx-auto bg-gradient-to-br from-purple-400 via-yellow-400 to-purple-600"
-										initial={{ opacity: 0, scale: 0.9 }}
-										animate={{ 
-											opacity: openIdx === idx ? 1 : 0, 
-											scale: openIdx === idx ? 1 : 0.9 
-										}}
-										transition={{ delay: openIdx === idx ? 0.4 : 0, duration: 0.5 }}
-									>
-										{/* Placeholder for video since actual video files aren't available */}
-										<div className="w-full h-full flex items-center justify-center text-white font-bold text-xl">
-											Video: {section.title}
-										</div>
-									</motion.div>
-								)}
+	// Calculate positions for each section
+	const getPositionInfo = (idx) => {
+		let topOffset = 0;
+		let bottomOffset = 180; // Space for never-opened items at bottom
+		
+		// Count previously opened items above this position
+		for (let i = 0; i < idx; i++) {
+			if (everOpened.has(i) && i !== openIdx) {
+				topOffset += 48; // 48px per closed header
+			}
+		}
+		
+		// Count previously opened items below this position
+		for (let i = idx + 1; i < sections.length; i++) {
+			if (everOpened.has(i) && i !== openIdx) {
+				bottomOffset += 48; // 48px per closed header
+			}
+		}
+		
+		return { topOffset, bottomOffset };
+	};
 
-								<motion.div 
-									layout
-									className="w-full my-8"
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: openIdx === idx ? 1 : 0, y: openIdx === idx ? 0 : 20 }}
-									transition={{ delay: openIdx === idx ? 0.5 : 0, duration: 0.4 }}
+	// Get never opened sections for bottom area
+	const neverOpenedSections = sections.filter((_, idx) => 
+		!everOpened.has(idx) && idx !== openIdx
+	);
+
+	return (
+		<div className="w-full">
+			{/* Render each section in its original position */}
+			{sections.map((section, idx) => {
+				const { topOffset, bottomOffset } = getPositionInfo(idx);
+				
+				if (idx === openIdx) {
+					// Currently open section - expanded view with TRUE upward expansion
+					const buttonPosition = everOpened.has(idx) ? 
+						(idx < openIdx ? topOffset : window.innerHeight - bottomOffset) : 
+						(idx * 80 + 112); // 112 = mt-28
+					
+					return (
+						<motion.div
+							key={`open-${idx}`}
+							initial={{ 
+								height: "60px", 
+								opacity: 1,
+								bottom: `${window.innerHeight - buttonPosition - 60}px` // Start from button position
+							}}
+							animate={{ 
+								height: `${window.innerHeight - topOffset - bottomOffset}px`,
+								opacity: 1,
+								bottom: `${bottomOffset}px` // Expand upward to final position
+							}}
+							exit={{ 
+								height: "60px", 
+								opacity: 0,
+								bottom: `${window.innerHeight - buttonPosition - 60}px`
+							}}
+							transition={{ 
+								duration: 0.8, 
+								ease: [0.04, 0.62, 0.23, 0.98],
+								opacity: { duration: 0.3 },
+								height: { duration: 0.8, ease: [0.32, 0.72, 0, 1] },
+								bottom: { duration: 0.8, ease: [0.32, 0.72, 0, 1] }
+							}}
+							className="fixed left-0 right-0 z-50 bg-blue-50 shadow-xl overflow-hidden"
+							style={{ 
+								transformOrigin: "bottom" // Critical: expand from bottom upward
+							}}
+						>
+							{/* Header */}
+							<div className="sticky top-0 bg-blue-50 z-10 border-b border-blue-200">
+								<button
+									onClick={() => handleAccordionClick(idx)}
+									className="w-full flex items-center justify-between text-left px-6 py-4 font-semibold text-lg text-blue-900 bg-blue-50 hover:bg-blue-100 transition"
 								>
-									{section.showVerticalTabsAccordion && <VerticalTabsAccordion />}
-									{section.showVideoCardGroup && <VideoCardGroup />}
-								</motion.div>
-								
-								{section.buttonText && (
-									<motion.div
-										layout
-										className="flex justify-center my-8 w-full"
-										initial={{ opacity: 0, y: 20 }}
-										animate={{ opacity: openIdx === idx ? 1 : 0, y: openIdx === idx ? 0 : 20 }}
-										transition={{ delay: openIdx === idx ? 0.6 : 0, duration: 0.4 }}
+									<span>{section.title}</span>
+									<motion.span
+										animate={{ rotate: 180 }}
+										transition={{ duration: 0.3 }}
+										className="ml-4 flex items-center justify-center w-7 h-7 rounded-full border border-[#002269] bg-[#002269] text-white"
 									>
-										<button className="mx-auto bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-4 px-8 rounded-xl shadow-lg text-lg transition-all duration-200 block hover:transform hover:scale-105">
-											{section.buttonText}
-										</button>
-									</motion.div>
-								)}
+										<ChevronUp size={20} />
+									</motion.span>
+								</button>
 							</div>
+							
+							{/* Content */}
+							<motion.div
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								transition={{ delay: 0.5, duration: 0.4 }}
+								className="px-8 pb-16 bg-blue-50 overflow-y-auto h-full"
+							>
+								<div className="pt-6 flex flex-col items-start text-left px-4 lg:px-24 max-w-6xl mx-auto">
+									<motion.h2
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: 0.4, duration: 0.4 }}
+										className="text-3xl lg:text-4xl font-bold leading-tight pb-8 text-blue-900"
+										style={{ fontFamily: "Georgia, serif" }}
+									>
+										{section.description}
+									</motion.h2>
+									
+									<motion.p 
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: 0.5, duration: 0.4 }}
+										className="text-base text-gray-700 pb-8 max-w-2xl whitespace-pre-line"
+									>
+										{section.details}
+									</motion.p>
+									
+									{section.video && (
+										<motion.div 
+											initial={{ opacity: 0, scale: 0.9 }}
+											animate={{ opacity: 1, scale: 1 }}
+											transition={{ delay: 0.6, duration: 0.5 }}
+											className="w-full max-w-2xl aspect-video rounded-xl overflow-hidden shadow-lg mb-6 mx-auto bg-gradient-to-br from-purple-400 via-yellow-400 to-purple-600"
+										>
+											<div className="w-full h-full flex items-center justify-center text-white font-bold text-xl">
+												Video: {section.title}
+											</div>
+										</motion.div>
+									)}
+
+									<motion.div 
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: 0.7, duration: 0.4 }}
+										className="w-full my-8"
+									>
+										{section.showVerticalTabsAccordion && <VerticalTabsAccordion />}
+										{section.showVideoCardGroup && <VideoCardGroup />}
+									</motion.div>
+									
+									{section.buttonText && (
+										<motion.div
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											transition={{ delay: 0.8, duration: 0.4 }}
+											className="flex justify-center my-8 w-full"
+										>
+											<button className="mx-auto bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-4 px-8 rounded-xl shadow-lg text-lg transition-all duration-200 hover:transform hover:scale-105">
+												{section.buttonText}
+											</button>
+										</motion.div>
+									)}
+								</div>
+							</motion.div>
 						</motion.div>
-					</motion.div>
-				</motion.div>
-			))}
+					);
+				} else if (everOpened.has(idx)) {
+					// Previously opened section - show as compact header
+					const isAboveCurrent = openIdx !== null && idx < openIdx;
+					const isBelowCurrent = openIdx !== null && idx > openIdx;
+					
+					let headerPosition = 0;
+					if (isAboveCurrent) {
+						// Calculate position above current
+						for (let i = 0; i < idx; i++) {
+							if (everOpened.has(i) && i !== openIdx) {
+								headerPosition += 48;
+							}
+						}
+					} else if (isBelowCurrent) {
+						// Calculate position below current  
+						let belowCount = 0;
+						for (let i = sections.length - 1; i > idx; i--) {
+							if (everOpened.has(i) && i !== openIdx) {
+								belowCount++;
+							}
+						}
+						headerPosition = belowCount * 48 + 180; // From bottom
+					}
+					
+					return (
+						<motion.div
+							key={`closed-${idx}`}
+							layout
+							className="fixed left-0 right-0 z-60 bg-gray-50 border-b border-gray-200"
+							style={{ 
+								[isAboveCurrent ? 'top' : 'bottom']: `${headerPosition}px`
+							}}
+						>
+							<button
+								onClick={() => handleAccordionClick(idx)}
+								className="w-full flex items-center justify-between text-left px-6 py-3 font-semibold text-sm transition focus:outline-none text-gray-700 bg-gray-50 hover:bg-gray-100"
+							>
+								<span>{section.title}</span>
+								<span className="ml-4 flex items-center justify-center w-6 h-6 rounded-full border border-gray-300 bg-gray-300 text-gray-600">
+									<ChevronUp size={16} />
+								</span>
+							</button>
+						</motion.div>
+					);
+				}
+				
+				return null;
+			})}
+			
+			{/* Show all sections normally when nothing is open */}
+			{openIdx === null && (
+				<div className="flex flex-col w-full mt-28">
+					{sections.map((section, idx) => (
+						<motion.div
+							key={`initial-${idx}`}
+							layout
+							initial={{ y: 80, opacity: 0 }}
+							animate={{ y: 0, opacity: 1 }}
+							transition={{ duration: 0.7, ease: "easeOut" }}
+							className="mb-4 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 bg-white"
+						>
+							<button
+								onClick={() => handleAccordionClick(idx)}
+								className="w-full flex items-center justify-between text-left px-6 py-4 font-semibold text-lg transition focus:outline-none text-gray-700 bg-gray-100 hover:bg-gray-200"
+							>
+								<span>{section.title}</span>
+								<span className="ml-4 flex items-center justify-center w-7 h-7 rounded-full border border-white bg-white text-gray-700">
+									<ChevronUp size={20} />
+								</span>
+							</button>
+						</motion.div>
+					))}
+				</div>
+			)}
+			
+			{/* Never opened sections at bottom */}
+			{openIdx !== null && neverOpenedSections.length > 0 && (
+				<div 
+					className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-gray-200 overflow-y-auto"
+					style={{
+						height: '180px',
+						padding: '12px'
+					}}
+				>
+					{neverOpenedSections.map((section, displayIdx) => {
+						const originalIdx = sections.findIndex(s => s.title === section.title);
+						
+						return (
+							<motion.div
+								key={`never-opened-${originalIdx}`}
+								layout
+								initial={{ y: 80, opacity: 0 }}
+								animate={{ y: 0, opacity: 1 }}
+								transition={{ duration: 0.7, ease: "easeOut" }}
+								className="mb-2 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 bg-white"
+							>
+								<button
+									onClick={() => {
+										console.log(`Opening never-opened section: ${section.title}, idx: ${originalIdx}`);
+										handleAccordionClick(originalIdx);
+									}}
+									className="w-full flex items-center justify-between text-left px-6 py-2 font-semibold text-sm transition focus:outline-none text-gray-700 bg-gray-100 hover:bg-gray-200"
+								>
+									<span>{section.title}</span>
+									<span className="ml-4 flex items-center justify-center w-6 h-6 rounded-full border border-white bg-white text-gray-700">
+										<ChevronUp size={16} />
+									</span>
+								</button>
+							</motion.div>
+						);
+					})}
+				</div>
+			)}
 		</div>
 	);
 }
