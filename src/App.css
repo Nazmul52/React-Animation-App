@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/* Accordion Section Styles */
+.accordion-section {
+  background-color: #f8fafc;
+  border-radius: 0.75rem;
+  overflow-y: auto;
+}
+
+.accordion-title {
+  padding: 1rem;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.accordion-arrow {
+  transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+/* Features Section Styles */
+.features-section {
+  display: flex;
+  justify-content: center;
+  background: #fff;
+}
+
+.features-list {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.feature-card {
+  background: #c0c0c0;
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  padding: 2rem 1.5rem;
+  max-width: 240px;
+  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.feature-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+  transform: translateY(-6px) scale(1.03);
+}
+
+.feature-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #0a2340;
+}
+
+.feature-card p {
+  font-size: 1rem;
+  color: #334155;
+  margin: 0;
+}
