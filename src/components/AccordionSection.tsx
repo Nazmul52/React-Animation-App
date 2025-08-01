@@ -89,13 +89,6 @@ export default function PositionBasedAccordion() {
 	const handleAccordionClick = (idx) => {
 		const newOpenIdx = openIdx === idx ? null : idx;
 		setOpenIdx(newOpenIdx);
-		
-		// Scroll to top when opening
-		if (newOpenIdx !== null) {
-			setTimeout(() => {
-				window.scrollTo({ top: 0, behavior: 'smooth' });
-			}, 100);
-		}
 	};
 
 	// Calculate positions for each section
