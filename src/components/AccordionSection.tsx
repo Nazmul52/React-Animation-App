@@ -139,12 +139,8 @@ export default function PositionBasedAccordion() {
 					{sections.map((section, idx) => {
 						if (idx >= openIdx) return null; // Only show sections above
 						return (
-							<motion.div
+							<div
 								key={`top-${idx}`}
-								layout
-								initial={{ y: -48, opacity: 0 }}
-								animate={{ y: 0, opacity: 1 }}
-								transition={{ duration: 0.5, ease: "easeOut" }}
 								className="fixed left-0 right-0 z-60 bg-gray-50 border-b border-gray-200"
 								style={{ 
 									top: `${idx * 48}px`
@@ -159,7 +155,7 @@ export default function PositionBasedAccordion() {
 										<ChevronUp size={16} />
 									</span>
 								</button>
-							</motion.div>
+							</div>
 						);
 					})}
 
@@ -279,12 +275,8 @@ export default function PositionBasedAccordion() {
 						if (idx <= openIdx) return null; // Only show sections below
 						const bottomPosition = (sections.length - 1 - idx) * 48; // Calculate position from bottom
 						return (
-							<motion.div
+							<div
 								key={`bottom-${idx}`}
-								layout
-								initial={{ y: 48, opacity: 0 }}
-								animate={{ y: 0, opacity: 1 }}
-								transition={{ duration: 0.5, ease: "easeOut" }}
 								className="fixed left-0 right-0 z-60 bg-gray-50 border-t border-gray-200"
 								style={{ 
 									bottom: `${bottomPosition}px`
@@ -299,7 +291,7 @@ export default function PositionBasedAccordion() {
 										<ChevronUp size={16} />
 									</span>
 								</button>
-							</motion.div>
+							</div>
 						);
 					})}
 				</>
