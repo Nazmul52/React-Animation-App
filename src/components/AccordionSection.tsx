@@ -211,14 +211,19 @@ export default function PositionBasedAccordion() {
 								height: "48px", 
 								opacity: 1
 							}}
-							animate={{ 
+							animate={idx === openIdx ? { 
+								height: `${getPositionInfo(openIdx).availableHeight}px`,
+								opacity: 1
+							} : {
 								height: `${getPositionInfo(openIdx).availableHeight}px`,
 								opacity: 1
 							}}
-							transition={{ 
+							transition={idx === openIdx ? { 
 								duration: 2, 
 								ease: [0.04, 0.62, 0.23, 0.98],
 								height: { duration: 2, ease: [0.32, 0.72, 0, 1] }
+							} : {
+								duration: 0 // No animation for background accordions
 							}}
 							className={`fixed left-0 right-0 bg-blue-50 shadow-xl overflow-hidden ${
 								idx === openIdx ? 'z-50' : 'z-40'
