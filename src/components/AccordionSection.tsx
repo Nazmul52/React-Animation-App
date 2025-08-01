@@ -115,11 +115,11 @@ export default function PositionBasedAccordion() {
 					clearTimeout(autoAdvanceTimeoutRef.current);
 				}
 				
-				// Add a longer delay to ensure user has finished reading
+				// Add a shorter delay for faster auto-advance
 				autoAdvanceTimeoutRef.current = setTimeout(() => {
 					const nextIdx = openIdx + 1;
 					setOpenIdx(nextIdx);
-				}, 1000); // 1 second delay after reaching the end
+				}, 300); // 300ms delay after reaching the end
 			}
 		};
 
