@@ -15,10 +15,11 @@ function App() {
           <HeroSection />
           <FeaturesSection />
           {/* <VideoCarousel /> */}
-          <AccordionSection />
 
         </div>
-        <Footer />
+          <AccordionSection />
+
+        {/* <Footer /> */}
       </main>
     </>
   );
