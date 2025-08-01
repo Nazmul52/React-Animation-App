@@ -87,8 +87,16 @@ export default function PositionBasedAccordion() {
 	const [openIdx, setOpenIdx] = useState<number | null>(null);
 	const [hasAutoOpened, setHasAutoOpened] = useState(false);
 	const accordionRef = useRef<HTMLDivElement>(null);
+	const contentRef = useRef<HTMLDivElement>(null);
+	const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	const handleAccordionClick = (idx: number) => {
+		// Clear any pending auto-advance when user manually clicks
+		if (autoAdvanceTimeoutRef.current) {
+			clearTimeout(autoAdvanceTimeoutRef.current);
+			autoAdvanceTimeoutRef.current = null;
+		}
+		
 		const newOpenIdx = openIdx === idx ? null : idx;
 		setOpenIdx(newOpenIdx);
 	};
@@ -119,6 +127,43 @@ export default function PositionBasedAccordion() {
 			observer.disconnect();
 		};
 	}, [hasAutoOpened]);
+
+	// Auto-advance to next accordion when user scrolls to bottom of current content
+	useEffect(() => {
+		if (openIdx === null || !contentRef.current) return;
+
+		const handleContentScroll = () => {
+			if (!contentRef.current || openIdx === null) return;
+
+			const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
+			const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
+
+			// When user scrolls to 95% of the content, smoothly advance to next accordion
+			if (scrollPercentage >= 0.50 && openIdx < sections.length - 1) {
+				// Clear any existing timeout to prevent multiple triggers
+				if (autoAdvanceTimeoutRef.current) {
+					clearTimeout(autoAdvanceTimeoutRef.current);
+				}
+				
+				// Add a small delay for smooth transition
+				autoAdvanceTimeoutRef.current = setTimeout(() => {
+					const nextIdx = openIdx + 1;
+					setOpenIdx(nextIdx);
+				}, 300); // Shorter 0.8 second delay for smoother experience
+			}
+		};
+
+		const contentElement = contentRef.current;
+		contentElement.addEventListener('scroll', handleContentScroll);
+
+		return () => {
+			contentElement.removeEventListener('scroll', handleContentScroll);
+			// Clean up timeout on unmount
+			if (autoAdvanceTimeoutRef.current) {
+				clearTimeout(autoAdvanceTimeoutRef.current);
+			}
+		};
+	}, [openIdx]);
 
 	// Calculate positions for each section
 	const getPositionInfo = (idx) => {
@@ -234,6 +279,7 @@ export default function PositionBasedAccordion() {
 						
 						{/* Content */}
 						<motion.div
+							ref={contentRef}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.5, duration: 0.4 }}
