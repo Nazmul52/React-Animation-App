@@ -186,10 +186,10 @@ export default function PositionBasedAccordion() {
 							opacity: 0
 						}}
 						transition={{ 
-							duration: 0.8, 
+							duration: 2, 
 							ease: [0.04, 0.62, 0.23, 0.98],
 							opacity: { duration: 0.3 },
-							height: { duration: 0.8, ease: [0.32, 0.72, 0, 1] }
+							height: { duration: 2, ease: [0.32, 0.72, 0, 1] }
 						}}
 						className="fixed left-0 right-0 z-50 bg-blue-50 shadow-xl overflow-hidden"
 						style={{ 
