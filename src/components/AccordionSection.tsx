@@ -100,11 +100,9 @@ export default function PositionBasedAccordion() {
 		const observer = new IntersectionObserver(
 			(entries) => {
 				const entry = entries[0];
-				console.log('Intersection observed:', entry.isIntersecting, 'ratio:', entry.intersectionRatio);
 				
 				// Trigger as soon as any part of the accordion becomes visible
 				if (entry.isIntersecting && entry.intersectionRatio > 0) {
-					console.log('Auto-opening first accordion item via Intersection Observer');
 					setOpenIdx(0);
 					setHasAutoOpened(true);
 				}
