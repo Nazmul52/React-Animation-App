@@ -4,7 +4,7 @@ import { ChevronUp } from "lucide-react";
 import VerticalTabsAccordion from './VerticalTabsAccordion';
 import VideoCardGroup from './VideoCardGroup';
 
-
+// Data for each accordion section
 const sections = [
 	{
 		title: "Contact Center Desktop",
@@ -53,12 +53,16 @@ As organizations move toward a more autonomous operations model, AI for customer
 ];
 
 export default function PositionBasedAccordion() {
-	const [openIdx, setOpenIdx] = useState<number | null>(null);
-	const [hasAutoOpened, setHasAutoOpened] = useState(false);
-	const accordionRef = useRef<HTMLDivElement>(null);
-	const contentRef = useRef<HTMLDivElement>(null);
-	const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	// State management
+	const [openIdx, setOpenIdx] = useState<number | null>(null); // Currently open accordion index
+	const [hasAutoOpened, setHasAutoOpened] = useState(false); // Prevent multiple auto-opens
+	
+	// Refs for DOM elements and timers
+	const accordionRef = useRef<HTMLDivElement>(null); // Main accordion container
+	const contentRef = useRef<HTMLDivElement>(null); // Current accordion content for scroll tracking
+	const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Timer for auto-advance
 
+	// Handle manual accordion clicks
 	const handleAccordionClick = (idx: number) => {
 		// Clear any pending auto-advance when user manually clicks
 		if (autoAdvanceTimeoutRef.current) {
@@ -66,11 +70,12 @@ export default function PositionBasedAccordion() {
 			autoAdvanceTimeoutRef.current = null;
 		}
 		
+		// Toggle accordion: close if same, open if different
 		const newOpenIdx = openIdx === idx ? null : idx;
 		setOpenIdx(newOpenIdx);
 	};
 
-	// Auto-open first accordion when scrolling past the three cards
+	// Auto-open first accordion when user scrolls to this section
 	useEffect(() => {
 		if (hasAutoOpened || !accordionRef.current) return;
 
@@ -78,7 +83,7 @@ export default function PositionBasedAccordion() {
 			(entries) => {
 				const entry = entries[0];
 				
-				// Trigger as soon as any part of the accordion becomes visible
+				// Open first accordion when any part becomes visible
 				if (entry.isIntersecting && entry.intersectionRatio > 0) {
 					setOpenIdx(0);
 					setHasAutoOpened(true);
@@ -86,7 +91,7 @@ export default function PositionBasedAccordion() {
 			},
 			{
 				threshold: [0], // Trigger as soon as any pixel is visible
-				rootMargin: '50px 0px 0px 0px' // Start observing 50px before the element comes into view
+				rootMargin: '50px 0px 0px 0px' // Start observing 50px before element
 			}
 		);
 
@@ -97,7 +102,7 @@ export default function PositionBasedAccordion() {
 		};
 	}, [hasAutoOpened]);
 
-	// Auto-advance to next accordion when user scrolls to bottom of current content
+	// Auto-advance to next accordion when user finishes reading current content
 	useEffect(() => {
 		if (openIdx === null || !contentRef.current) return;
 
@@ -107,15 +112,14 @@ export default function PositionBasedAccordion() {
 			const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
 			const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
 
-			// Only advance when user has scrolled to the very end (98% or more)
-			// and add some buffer to ensure they've really finished reading
+			// Advance when user reaches 98% of content and there's a next section
 			if (scrollPercentage >= 0.98 && openIdx < sections.length - 1) {
 				// Clear any existing timeout to prevent multiple triggers
 				if (autoAdvanceTimeoutRef.current) {
 					clearTimeout(autoAdvanceTimeoutRef.current);
 				}
 				
-				// Add a shorter delay for faster auto-advance
+				// Short delay for smooth transition
 				autoAdvanceTimeoutRef.current = setTimeout(() => {
 					const nextIdx = openIdx + 1;
 					setOpenIdx(nextIdx);
@@ -135,11 +139,11 @@ export default function PositionBasedAccordion() {
 		};
 	}, [openIdx]);
 
-	// Calculate positions for each section
+	// Calculate positioning for accordion sections
 	const getPositionInfo = (idx) => {
 		const headerHeight = 48; // Height per closed header
 		const sectionsAbove = idx; // Number of sections above the open item
-		const sectionsBelow = sections.length - idx - 1; // Number of sections below the open item
+		const sectionsBelow = sections.length - idx - 1; // Number of sections below
 		
 		const topOffset = sectionsAbove * headerHeight;
 		const bottomOffset = sectionsBelow * headerHeight;
@@ -150,7 +154,7 @@ export default function PositionBasedAccordion() {
 
 	return (
 		<div className="w-full" ref={accordionRef}>
-			{/* Show all sections normally when nothing is open */}
+			{/* Initial state: Show all sections as closed cards */}
 			{openIdx === null && (
 				<div className="flex flex-col w-full mt-28">
 					{sections.map((section, idx) => (
@@ -176,10 +180,10 @@ export default function PositionBasedAccordion() {
 				</div>
 			)}
 
-			{/* When an accordion is open */}
+			{/* Opened state: Complex layered accordion system */}
 			{openIdx !== null && (
 				<>
-					{/* Closed sections above the open item */}
+					{/* Collapsed headers above the open accordion */}
 					{sections.map((section, idx) => {
 						if (idx >= openIdx) return null; // Only show sections above
 						return (
@@ -203,7 +207,7 @@ export default function PositionBasedAccordion() {
 						);
 					})}
 
-					{/* Render all accordions up to the current one for layered background effect */}
+					{/* Layered accordion system: All previous + current accordions stacked */}
 					{Array.from({ length: openIdx + 1 }, (_, idx) => (
 						<motion.div
 							key={`accordion-${idx}`}
@@ -233,7 +237,7 @@ export default function PositionBasedAccordion() {
 								transformOrigin: "bottom"
 							}}
 						>
-							{/* Header */}
+							{/* Accordion header */}
 							<div className="sticky top-0 bg-blue-50 z-10 border-b border-blue-200">
 								<button
 									onClick={() => handleAccordionClick(idx)}
@@ -250,9 +254,9 @@ export default function PositionBasedAccordion() {
 								</button>
 							</div>
 							
-							{/* Content */}
+							{/* Accordion content */}
 							<motion.div
-								ref={idx === openIdx ? contentRef : undefined}
+								ref={idx === openIdx ? contentRef : undefined} // Only current accordion tracks scroll
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								transition={{ delay: 0.5, duration: 0.4 }}
@@ -260,6 +264,7 @@ export default function PositionBasedAccordion() {
 								style={{ height: 'calc(100% - 72px)' }}
 							>
 								<div className="pt-6 flex flex-col items-start text-left px-4 lg:px-24 max-w-6xl mx-auto">
+									{/* Section title */}
 									<motion.h2
 										initial={{ opacity: 0, y: 20 }}
 										animate={{ opacity: 1, y: 0 }}
@@ -270,6 +275,7 @@ export default function PositionBasedAccordion() {
 										{sections[idx].description}
 									</motion.h2>
 									
+									{/* Section details */}
 									<motion.p 
 										initial={{ opacity: 0, y: 20 }}
 										animate={{ opacity: 1, y: 0 }}
@@ -279,6 +285,7 @@ export default function PositionBasedAccordion() {
 										{sections[idx].details}
 									</motion.p>
 									
+									{/* Video placeholder */}
 									{sections[idx].video && (
 										<motion.div 
 											initial={{ opacity: 0, scale: 0.9 }}
@@ -292,6 +299,7 @@ export default function PositionBasedAccordion() {
 										</motion.div>
 									)}
 
+									{/* Additional components */}
 									<motion.div 
 										initial={{ opacity: 0, y: 20 }}
 										animate={{ opacity: 1, y: 0 }}
@@ -302,6 +310,7 @@ export default function PositionBasedAccordion() {
 										{sections[idx].showVideoCardGroup && <VideoCardGroup />}
 									</motion.div> 
 									
+									{/* Call-to-action button */}
 									{sections[idx].buttonText && (
 										<motion.div
 											initial={{ opacity: 0, y: 20 }}
@@ -317,7 +326,7 @@ export default function PositionBasedAccordion() {
 								</div>
 							</motion.div>
 						</motion.div>
-					))})					{/* Closed sections below the open item */}
+					))})					{/* Collapsed headers below the open accordion */}
 					{sections.map((section, idx) => {
 						if (idx <= openIdx) return null; // Only show sections below
 						const bottomPosition = (sections.length - 1 - idx) * 48; // Calculate position from bottom
