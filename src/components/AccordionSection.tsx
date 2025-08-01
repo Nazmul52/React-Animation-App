@@ -102,15 +102,16 @@ export default function PositionBasedAccordion() {
 				const entry = entries[0];
 				console.log('Intersection observed:', entry.isIntersecting, 'ratio:', entry.intersectionRatio);
 				
-				if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
+				// Trigger as soon as any part of the accordion becomes visible
+				if (entry.isIntersecting && entry.intersectionRatio > 0) {
 					console.log('Auto-opening first accordion item via Intersection Observer');
 					setOpenIdx(0);
 					setHasAutoOpened(true);
 				}
 			},
 			{
-				threshold: [0.1, 0.3, 0.5], // Trigger when 10%, 30%, or 50% visible
-				rootMargin: '0px 0px -20% 0px' // Trigger earlier
+				threshold: [0], // Trigger as soon as any pixel is visible
+				rootMargin: '50px 0px 0px 0px' // Start observing 50px before the element comes into view
 			}
 		);
 
