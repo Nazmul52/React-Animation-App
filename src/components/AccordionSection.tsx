@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 
@@ -84,12 +84,42 @@ As organizations move toward a more autonomous operations model, AI for customer
 ];
 
 export default function PositionBasedAccordion() {
-	const [openIdx, setOpenIdx] = useState(null);
+	const [openIdx, setOpenIdx] = useState<number | null>(null);
+	const [hasAutoOpened, setHasAutoOpened] = useState(false);
+	const accordionRef = useRef<HTMLDivElement>(null);
 
-	const handleAccordionClick = (idx) => {
+	const handleAccordionClick = (idx: number) => {
 		const newOpenIdx = openIdx === idx ? null : idx;
 		setOpenIdx(newOpenIdx);
 	};
+
+	// Auto-open first accordion when scrolling past the three cards
+	useEffect(() => {
+		if (hasAutoOpened || !accordionRef.current) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const entry = entries[0];
+				console.log('Intersection observed:', entry.isIntersecting, 'ratio:', entry.intersectionRatio);
+				
+				if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
+					console.log('Auto-opening first accordion item via Intersection Observer');
+					setOpenIdx(0);
+					setHasAutoOpened(true);
+				}
+			},
+			{
+				threshold: [0.1, 0.3, 0.5], // Trigger when 10%, 30%, or 50% visible
+				rootMargin: '0px 0px -20% 0px' // Trigger earlier
+			}
+		);
+
+		observer.observe(accordionRef.current);
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [hasAutoOpened]);
 
 	// Calculate positions for each section
 	const getPositionInfo = (idx) => {
@@ -105,7 +135,7 @@ export default function PositionBasedAccordion() {
 	};
 
 	return (
-		<div className="w-full">
+		<div className="w-full" ref={accordionRef}>
 			{/* Show all sections normally when nothing is open */}
 			{openIdx === null && (
 				<div className="flex flex-col w-full mt-28">
