@@ -1,40 +1,9 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
+import VerticalTabsAccordion from './VerticalTabsAccordion';
+import VideoCardGroup from './VideoCardGroup';
 
-// Mock components for demo - replace with your actual components
-const VerticalTabsAccordion = () => (
-  <div className="bg-gray-100 p-6 rounded-lg border">
-    <h3 className="font-semibold text-gray-800 mb-4">Vertical Tabs Accordion</h3>
-    <div className="space-y-2">
-      <div className="bg-white p-3 rounded border-l-4 border-blue-500">
-        <p className="text-sm text-gray-600">Tab 1: Feature Overview</p>
-      </div>
-      <div className="bg-white p-3 rounded border-l-4 border-gray-300">
-        <p className="text-sm text-gray-600">Tab 2: Implementation Details</p>
-      </div>
-      <div className="bg-white p-3 rounded border-l-4 border-gray-300">
-        <p className="text-sm text-gray-600">Tab 3: Best Practices</p>
-      </div>
-    </div>
-  </div>
-);
-
-const VideoCardGroup = () => (
-  <div className="bg-gray-100 p-6 rounded-lg border">
-    <h3 className="font-semibold text-gray-800 mb-4">Video Card Group</h3>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <div className="bg-gradient-to-br from-blue-400 to-purple-500 h-32 rounded mb-3"></div>
-        <p className="text-sm font-medium">Customer Success Story</p>
-      </div>
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <div className="bg-gradient-to-br from-green-400 to-blue-500 h-32 rounded mb-3"></div>
-        <p className="text-sm font-medium">Product Demo</p>
-      </div>
-    </div>
-  </div>
-);
 
 const sections = [
 	{
@@ -138,18 +107,19 @@ export default function PositionBasedAccordion() {
 			const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
 			const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
 
-			// When user scrolls to 95% of the content, smoothly advance to next accordion
-			if (scrollPercentage >= 0.50 && openIdx < sections.length - 1) {
+			// Only advance when user has scrolled to the very end (98% or more)
+			// and add some buffer to ensure they've really finished reading
+			if (scrollPercentage >= 0.98 && openIdx < sections.length - 1) {
 				// Clear any existing timeout to prevent multiple triggers
 				if (autoAdvanceTimeoutRef.current) {
 					clearTimeout(autoAdvanceTimeoutRef.current);
 				}
 				
-				// Add a small delay for smooth transition
+				// Add a longer delay to ensure user has finished reading
 				autoAdvanceTimeoutRef.current = setTimeout(() => {
 					const nextIdx = openIdx + 1;
 					setOpenIdx(nextIdx);
-				}, 300); // Shorter 0.8 second delay for smoother experience
+				}, 1000); // 1 second delay after reaching the end
 			}
 		};
 
@@ -327,7 +297,7 @@ export default function PositionBasedAccordion() {
 								>
 									{sections[openIdx].showVerticalTabsAccordion && <VerticalTabsAccordion />}
 									{sections[openIdx].showVideoCardGroup && <VideoCardGroup />}
-								</motion.div>
+								</motion.div> 
 								
 								{sections[openIdx].buttonText && (
 									<motion.div
