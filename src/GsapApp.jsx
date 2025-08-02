@@ -9,6 +9,7 @@ import PerformanceMonitor from "./components/PerformanceMonitor";
 export default function GsapApp() {
   return (
     <>
+      <Navbar />
       <main className="pt-20 bg-white min-h-screen">
         <div className="max-w-screen-xl mx-auto px-4">
           <HeroSection />
