@@ -2,6 +2,13 @@
 
 A comprehensive demonstration application showcasing the differences and similarities between **Framer Motion** and **GSAP** animation libraries in React. This project provides side-by-side implementations of complex UI animations, allowing developers to compare approaches, performance, and code patterns.
 
+## 🌐 Live Demo
+
+**🔗 [View Live Demo](https://react-animation-kajebyi43-nazmul-hudas-projects-94c86471.vercel.app)**
+
+- **Motion Version**: [/](https://react-animation-kajebyi43-nazmul-hudas-projects-94c86471.vercel.app/)
+- **GSAP Version**: [/gsap](https://react-animation-kajebyi43-nazmul-hudas-projects-94c86471.vercel.app/gsap)
+
 ## 🎯 Project Overview
 
 This application demonstrates identical functionality implemented with two different animation libraries:
