@@ -1,27 +1,22 @@
 import "./App.css";
-import Navbar from "./components/Navbar";
-import HeroSection from "./components/HeroSection";
-import FeaturesSection from "./components/FeaturesSection";
-import VideoCarousel from "./components/VideoCarousel";
-import Footer from "./components/Footer";
-import AccordionSection from "./components/AccordionSection";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MotionApp from "./MotionApp";
+import GsapApp from "./GsapApp";
+import Navigation from "./Navigation";
+import ComparisonInfo from "./components/ComparisonInfo";
 
 function App() {
   return (
-    <>
-      <Navbar />
-      <main className="pt-20 bg-white min-h-screen">
-        <div className="max-w-screen-xl mx-auto px-4">
-          <HeroSection />
-          <FeaturesSection />
-          {/* <VideoCarousel /> */}
-
-        </div>
-          <AccordionSection />
-
-        {/* <Footer /> */}
-      </main>
-    </>
+    <Router>
+      <div className="min-h-screen bg-white">
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<MotionApp />} />
+          <Route path="/gsap" element={<GsapApp />} />
+        </Routes>
+        <ComparisonInfo />
+      </div>
+    </Router>
   );
 }
 
