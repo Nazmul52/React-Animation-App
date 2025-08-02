@@ -4,10 +4,10 @@ A comprehensive demonstration application showcasing the differences and similar
 
 ## 🌐 Live Demo
 
-**🔗 [View Live Demo](https://react-animation-cmwsl93zc-nazmul-hudas-projects-94c86471.vercel.app)**
+**🔗 [View Live Demo](https://react-animation-app-one.vercel.app/)**
 
-- **Motion Version**: [/](https://react-animation-cmwsl93zc-nazmul-hudas-projects-94c86471.vercel.app/)
-- **GSAP Version**: [/gsap](https://react-animation-cmwsl93zc-nazmul-hudas-projects-94c86471.vercel.app/gsap)
+- **Motion Version**: [/](https://react-animation-app-one.vercel.app/)
+- **GSAP Version**: [/gsap](https://react-animation-app-one.vercel.app/gsap)
 
 ## 🎯 Project Overview
 
