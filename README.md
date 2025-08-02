@@ -4,10 +4,10 @@ A comprehensive demonstration application showcasing the differences and similar
 
 ## 🌐 Live Demo
 
-**🔗 [View Live Demo](https://react-animation-kajebyi43-nazmul-hudas-projects-94c86471.vercel.app)**
+**🔗 [View Live Demo](https://react-animation-cmwsl93zc-nazmul-hudas-projects-94c86471.vercel.app)**
 
-- **Motion Version**: [/](https://react-animation-kajebyi43-nazmul-hudas-projects-94c86471.vercel.app/)
-- **GSAP Version**: [/gsap](https://react-animation-kajebyi43-nazmul-hudas-projects-94c86471.vercel.app/gsap)
+- **Motion Version**: [/](https://react-animation-cmwsl93zc-nazmul-hudas-projects-94c86471.vercel.app/)
+- **GSAP Version**: [/gsap](https://react-animation-cmwsl93zc-nazmul-hudas-projects-94c86471.vercel.app/gsap)
 
 ## 🎯 Project Overview
 
@@ -78,8 +78,8 @@ src/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd react-motion-app
+   git clone https://github.com/Nazmul52/React-Animation-App.git
+   cd React-Animation-App
    ```
 
 2. **Install dependencies**
