@@ -65,6 +65,22 @@ export default function PositionBasedAccordion() {
 	const contentRef = useRef<HTMLDivElement>(null); // Current accordion content for scroll tracking
 	const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Timer for auto-advance
 
+	// Lock/unlock body scroll when accordion opens/closes
+	useEffect(() => {
+		if (openIdx !== null) {
+			// Lock body scroll when accordion is open
+			document.body.style.overflow = 'hidden';
+		} else {
+			// Restore body scroll when accordion is closed
+			document.body.style.overflow = 'unset';
+		}
+
+		// Cleanup on unmount
+		return () => {
+			document.body.style.overflow = 'unset';
+		};
+	}, [openIdx]);
+
 	// Handle manual accordion clicks
 	const handleAccordionClick = (idx: number) => {
 		// Clear any pending auto-advance when user manually clicks
@@ -247,7 +263,7 @@ export default function PositionBasedAccordion() {
 								idx === openIdx ? 'z-50' : 'z-40'
 							}`}
 							style={{ 
-								bottom: `${getPositionInfo(openIdx).bottomOffset}px`,
+								bottom: `${getPositionInfo(openIdx).bottomOffset}px`, // Back to bottom positioning for upward expansion
 								height: idx === openIdx ? "48px" : `${getPositionInfo(openIdx).availableHeight}px`,
 								transformOrigin: "bottom"
 							}}
@@ -340,7 +356,7 @@ export default function PositionBasedAccordion() {
 								key={`bottom-${idx}`}
 								className="fixed left-0 right-0 z-60 bg-gray-50 border-t border-gray-200"
 								style={{ 
-									bottom: `${bottomPosition}px`
+									bottom: `${bottomPosition}px` // Back to bottom positioning
 								}}
 							>
 								<button
