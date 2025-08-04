@@ -89,6 +89,11 @@ export default function PositionBasedAccordion() {
 		// Toggle accordion: close if same, open if different
 		const newOpenIdx = openIdx === idx ? null : idx;
 		setOpenIdx(newOpenIdx);
+		
+		// Reset auto-open state when accordion is closed to allow auto-opening again
+		if (newOpenIdx === null) {
+			setHasAutoOpened(false);
+		}
 	};
 
 	// Auto-open first accordion when user scrolls past the feature cards
